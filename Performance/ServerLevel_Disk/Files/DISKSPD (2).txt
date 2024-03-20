@@ -1,0 +1,1 @@
+diskspd -c7G -d90 -r -w40 -t8 -o8 -b64K -h -L c:\test.dat > C:\DISKSPD_C.txt

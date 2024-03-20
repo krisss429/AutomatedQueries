@@ -1,0 +1,10 @@
+SELECT conn.session_id AS SPID,
+       conn.client_net_address AS IPAddress,
+       sess.host_name AS MachineName,
+       sess.program_name AS ApplicationName,
+       login_name AS LoginName
+FROM sys.dm_exec_connections conn
+    INNER JOIN sys.dm_exec_sessions sess
+        ON conn.session_id = sess.session_id
+WHERE sess.host_name = 'svchorison(ISO_PROD)'
+      AND sess.login_name = 'prod_hsisoQ218'

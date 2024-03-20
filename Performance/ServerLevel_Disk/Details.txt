@@ -1,0 +1,32 @@
+This can be used to test IO subsystem on Unity
+
+We should test at minimum:
+                Sequential read IO (simulate backups and large reports)
+                Random read/write IO (probably test both write heavy and then read heavy, maybe 70-80% each way)
+                Different queue depth settings (i.e. 16,32)
+                Block sizes of SQL extents (64KB), SQL Page (8KB) and DELL suggestion of 512KB (best practices doc lists some tests to run)
+                Multiple threads, probably along the lines of ½ # of cores and/or MAXDOP value 
+
+Plus whatever else you guys think necessary for each, above is minimum we should hit, since this is scriptable it can all be pre-staged and ready to go
+
+
+
+
+
+This is the command you can run.  Just create a folder under C:\Temp called diskspd or something like that and copy the .exe and .xsd to that location. 
+
+I’ll upload this this also to install location
+
+diskspd -c7G -d90 -r -w40 -t8 -o8 -b64K -h -L c:\test.dat > e:\DISKSPD_C.txt
+
+-c = size of test file
+-d = runtime of workload (seconds)
+-r = random IO
+-w = percent of write activity
+-t = threads
+-o = outstanding IO (queue depth)
+-b = block size
+-h = disable hardware caching
+-L = measure latency
+C:\test.dat = name\location of test file
+
