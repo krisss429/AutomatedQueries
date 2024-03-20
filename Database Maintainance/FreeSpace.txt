@@ -1,0 +1,2 @@
+﻿Get-WmiObject –ComputerName Server1 –Class Win32_Volume `| ft –auto DriveLetter,
+`Label,`@{Label=”Free(GB)”;Expression={'{0:N0}’ –F ($_.FreeSpace/1GB)}}
