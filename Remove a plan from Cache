@@ -1,0 +1,37 @@
+-- Part 1: -- Use this query to look for bad performing queries using "TOP (@ResultLimit)"
+select 
+       count(1) as [count of running queries, should be less than 10], 
+       max(datediff(second, start_time, getdate())) as [longest running such query in seconds],
+       min(datediff(second, start_time, getdate())) as [shortest running such query in seconds]
+from sys.dm_exec_requests er
+cross apply sys.dm_exec_sql_text(er.sql_handle) st
+where st.text like '%TOP (@ResultLimit)%'
+    and st.text not like '%80B82FDD-0297-4057-9AEB-D811F3B5C7DB%' -- filter self
+GO
+ 
+ 
+ 
+-- Part 2:-- If the above indicates poor performance (i.e. many active MyTable queries), -- use the following to clear bad plan from cache.
+declare @count int = 0;
+declare @planhandle varbinary(64)
+ 
+select 
+    @count = count(1), 
+    @planhandle = max(plan_handle) -- any arbitrary plan
+from sys.dm_exec_requests er
+cross apply sys.dm_exec_sql_text(er.sql_handle) st
+where st.text like '%TOP (@ResultLimit)%'
+    and st.text not like '%80B82FDD-0297-4057-9AEB-D811F3B5C7DB%' -- filter self
+ 
+-- this query recompiles the one identified plan.if (@count > 10)
+    --working
+    dbcc freeproccache (@planhandle);
+GO
+
+SELECT cp.plan_handle, cp.objtype, cp.usecounts, OBJECT_NAME (st.objectid),
+DB_NAME(st.dbid) AS [DatabaseName]
+FROM        sys.dm_exec_cached_plans AS cp 
+CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS st 
+where st.text like '%SchemeSelfOrAncestor%'
+ORDER BY 4
+OPTION (RECOMPILE)
