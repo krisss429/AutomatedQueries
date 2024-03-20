@@ -1,0 +1,31 @@
+Step-
+
+Open a PowerShell terminal and type in
+
+$profile
+
+This should display the path that would be used to store you profile. However it might not be created yet, so in order to find out, type the following:
+
+test-path $profile
+
+If the result is true, you’re all set, else type the following to create the profile:
+
+new-item -path $profile -itemtype file -force
+
+You’re now all set with your profile, and can customize it, by launching the PowerShell ISE:
+
+powershell_ise $profile
+
+Auto-load scripts on PowerShell startup
+In the ps1 file of your profile, usually named “Microsoft.PowerShell_profile.ps1”, you can enter the following code, so that the folder of your choice will contain scripts that will be executed on startup:
+
+
+# directory where my scripts are stored
+
+$psdir="D:\Documents\Powershell\Scripts\autoload"  
+
+# load all 'autoload' scripts
+
+Get-ChildItem "${psdir}\*.ps1" | %{.$_} 
+
+Write-Host "Custom PowerShell Environment Loaded" 
