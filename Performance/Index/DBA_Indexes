@@ -1,0 +1,130 @@
+/*** missing indexes ***/
+select * from sys.dm_db_missing_index_details where database_id = db_id()
+
+
+SELECT index_handle, column_name,
+CASE
+ WHEN column_usage IN ( 'EQUALITY', 'INEQUALITY') THEN 'index_key'
+ WHEN column_usage = 'INCLUDE' THEN 'included_column'
+END AS column_usage
+FROM
+sys.dm_db_missing_index_groups a CROSS APPLY
+sys.dm_db_missing_index_columns (a .index_handle)
+order by 1
+
+
+/*** user impact of missing indexes ***/
+SELECT
+avg_user_impact AS average_improvement_percentage ,
+avg_total_user_cost AS average_cost_of_query_without_missing_index,
+'CREATE INDEX idx_' + [statement] +
+ISNULL(equality_columns , '_' ) +
+ISNULL(inequality_columns , '_' ) + ' ON ' + [statement] +
+' (' + ISNULL( equality_columns, ' ') +
+ISNULL(inequality_columns , ' ' ) + ')' +
+ISNULL(' INCLUDE (' + included_columns + ')' , '' )
+AS create_missing_index_command
+FROM sys .dm_db_missing_index_details a INNER JOIN
+sys.dm_db_missing_index_groups b ON a .index_handle = b.index_handle
+INNER JOIN sys. dm_db_missing_index_group_stats c ON
+b.index_group_handle = c. group_handle
+--WHERE avg_user_impact > = 40
+--order by 3
+ORDER BY avg_total_user_cost * avg_user_impact * ( user_seeks + user_scans )DESC
+
+
+--user impact of missing indexes #2
+SELECT TOP 25
+	--CONVERT(decimal(18,2), (user_seeks+ user_scans) * avg_total_user_cost * (avg_user_impact * 0.01)) AS [index_advantage], 
+	--migs.last_user_seek, 
+	CONVERT(decimal(18,2), user_seeks * avg_total_user_cost * (avg_user_impact * 0.01)) AS IndexBenefit,
+	migs.avg_total_user_cost, 
+	migs.avg_user_impact,
+	mid.[statement] AS [Database.Schema.Table],
+	mid.equality_columns, 
+	mid.inequality_columns, 
+	mid.included_columns,
+	migs.unique_compiles, 
+	migs.user_seeks, 
+	--migs.user_scans,
+	'CREATE INDEX idx_' + [statement] +
+ISNULL(equality_columns , '_' ) +
+ISNULL(inequality_columns , '_' ) + ' ON ' + [statement] +
+' (' + ISNULL( equality_columns, ' ') +
+ISNULL(inequality_columns , ' ' ) + ')' +
+ISNULL(' INCLUDE (' + included_columns + ')' , '' )
+AS create_missing_index_command
+FROM       sys.dm_db_missing_index_group_stats AS migs WITH (NOLOCK)
+INNER JOIN sys.dm_db_missing_index_groups AS mig WITH (NOLOCK) ON migs.group_handle = mig.index_group_handle
+INNER JOIN sys.dm_db_missing_index_details AS mid WITH (NOLOCK) ON mig.index_handle = mid.index_handle
+WHERE mid.[statement] LIKE N'%CMS%'
+ORDER BY IndexBenefit DESC OPTION (RECOMPILE);
+
+
+
+/*** index stats ***/
+SELECT      o.name AS object_name , i. name AS index_name
+   , i .type_desc, u.user_seeks , u. user_scans, u .user_lookups, u.user_updates
+FROM  sys .indexes i
+JOIN  sys .objects o
+ON    i. object_id = o.object_id
+LEFT JOIN    sys. dm_db_index_usage_stats u
+ON    i. object_id = u.object_id
+AND   i. index_id = u .index_id
+AND   u. database_id = DB_ID()
+WHERE o. type <> 'S'            -- No system tables!
+ORDER BY     (ISNULL( u.user_seeks , 0) + ISNULL(u .user_scans, 0) + ISNULL(u .user_lookups, 0)
+   + ISNULL(u .user_updates, 0)), o .name, i.name
+  
+   -- exact duplicates
+with indexcols as
+(
+select object_id as id , index_id as indid, name ,
+(select case keyno when 0 then NULL else colid end as [data()]
+from sys .sysindexkeys as k
+where k. id = i .object_id
+and k. indid = i .index_id
+order by keyno, colid
+for xml path( '')) as cols,
+(select case keyno when 0 then colid else NULL end as [data()]
+from sys .sysindexkeys as k
+where k. id = i .object_id
+and k. indid = i .index_id
+order by colid
+for xml path( '')) as inc
+from sys .indexes as i
+)
+select
+object_schema_name(c1 .id) + '.' + object_name( c1.id ) as 'table',
+c1.name as 'index' ,
+c2.name as 'exactduplicate'
+from indexcols as c1
+join indexcols as c2
+on c1. id = c2 .id
+and c1. indid < c2 .indid
+and c1. cols = c2 .cols
+and c1. inc = c2 .inc;
+
+
+-- Overlapping indxes
+with indexcols as
+(
+select object_id as id , index_id as indid, name ,
+(select case keyno when 0 then NULL else colid end as [data()]
+from sys .sysindexkeys as k
+where k. id = i .object_id
+and k. indid = i .index_id
+order by keyno, colid
+for xml path( '')) as cols
+from sys .indexes as i
+)
+select
+object_schema_name(c1 .id) + '.' + object_name( c1.id ) as 'table',
+c1.name as 'index' ,
+c2.name as 'partialduplicate'
+from indexcols as c1
+join indexcols as c2
+on c1. id = c2 .id
+and c1. indid < c2 .indid
+and ( c1.cols like c2. cols + '%'
+or c2. cols like c1 .cols + '%') ; 
