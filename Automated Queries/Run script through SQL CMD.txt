@@ -1,0 +1,4 @@
+REM Run order 43 ITR#9651
+sqlcmd -b -S server_name,port_if_default_instance -d database_name -E -i "path\name.sql" >>"path\name.sql.log"
+
+sqlcmd -b -S CAMMARROCMSDB1,1433 -d DF_Export_Prod -E -i "C:\Users\rakesh.ramineni\Desktop\PBATCH_1000_TO_PBATCH_0692_#56716.sql" >>"C:\Users\rakesh.ramineni\Desktop\PBATCH_1000_TO_PBATCH_0692_#56716.sql.log"
