@@ -1,0 +1,52 @@
+----Service Pack Patching--
+--Deployment and Rollback
+http://blogs.msdn.com/b/john_daskalakis/archive/2014/09/05/how-to-install-a-service-pack-at-a-sql-server-2012-failover-instance-best-practices.aspx
+
+-------Patching Microsoft Failover Cluster
+https://araihan.wordpress.com/2013/07/19/windows-server-patching-best-practices/
+
+https://support.microsoft.com/en-us/kb/958734
+
+
+-------MIGRATING SQL SERVER DATABASES THAT USE DMK
+https://mattsql.wordpress.com/2012/11/13/migrating-sql-server-databases-that-use-database-master-keys/
+http://blogs.msdn.com/b/sqlserverfaq/archive/2008/07/16/regeneration-of-the-master-key-fails-when-we-try-to-take-the-backup-of-the-original-database-and-restore-on-other-instance-of-sql-server-on-other-machine.aspx
+
+-------HSM HSM HSM HSM HSM
+http://sqlmag.com/database-security/sql-server-encryption
+
+http://sqlmag.com/sql-server-2008/sql-server-2008-boosts-built-encryption
+
+
+-------Update Stats
+http://blogs.microsoft.co.il/yaniv_etrogi/2015/08/02/manually-update-statistics/
+https://www.mssqltips.com/sqlservertip/2628/how-to-find-outdated-statistics-in-sql-server-2008/
+http://thesqldude.com/2012/05/04/shedding-light-on-sql-server-statistics-and-auto-update-statistics/
+http://www.i-programmer.info/programming/database/4008-improve-sql-performance-know-your-statistics.html
+
+
+-------Sp_configure
+https://www.mssqltips.com/sqlservertip/1767/execute-sql-server-query-on-multiple-servers-at-the-same-time/
+https://www.mssqltips.com/sqlservertip/2445/sql-server-multi-server-administration/
+https://www.simple-talk.com/sql/sql-training/how-to-document-and-configure-sql-server-instance-settings/
+http://dba.stackexchange.com/questions/90671/sql-server-running-a-job-on-multiple-servers
+
+
+------Service BRoker
+http://stackoverflow.com/questions/17600537/service-broker-messages-start-to-get-hung-up-after-about-a-day
+http://rusanu.com/2007/11/10/when-it-rains-it-pours/
+http://rusanu.com/2006/03/07/call-a-procedure-in-another-database-from-an-activated-procedure/
+
+
+-----call Store proc in view
+http://capnjosh.com/blog/how-to-call-a-stored-procedure-from-a-view-in-sql-server/
+
+-----Cluster
+http://johnsterrett.com/2010/10/07/rename-server-name-for-sql-server-cluster/
+
+----backups
+https://www.simple-talk.com/sql/backup-and-recovery/how-to-get-information-about-your-backups/
+
+----Performance
+https://www.mssqltips.com/sqlservertutorial/276/sql-server-performance-tuning-and-monitoring-tutorial/
+

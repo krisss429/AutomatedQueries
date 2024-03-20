@@ -1,0 +1,31 @@
+Robocopy D:\Temp\ G:\ rating.bak /dcopy:T /mt
+
+
+D:\Temp -Source
+G:\ -Destination
+rating.bak -filename
+
+
+Robocopy "D:\Program Files\Microsoft SQL Server" N:\Test1 *.* /E /COPY:DAT /SEC /DCOPY:T /Log:C:\temp\RoboLog.txt
+
+
+Robocopy E:\ C:\Test1 *.* /E /COPY:DAT /SEC /DCOPY:T /XD "E:\$RECYCLE.BIN" /XD "E:\System Volume Information" /Log:C:\temp\RoboLog.txt
+
+Robocopy D:\ C:\Temp\SQL05 *.* /E /COPY:DAT /SEC /DCOPY:T /XD "E:\$RECYCLE.BIN" /XD "E:\System Volume Information" /Log:C:\temp\RoboLogSQL05.txt
+
+Robocopy E:\ C:\TEMP\Tempdb25 *.* /E /COPY:DAT /SEC /DCOPY:T /XD "E:\$RECYCLE.BIN" /XD "E:\System Volume Information" /Log:C:\temp\RoboLogTempDb25.txt
+
+
+
+Robocopy D:\ C:\TEMP\SQLBinaries *.* /E /COPY:DAT /SEC /DCOPY:T /XD "D:\$RECYCLE.BIN" /XD "D:\System Volume Information" /Log:C:\temp\RoboLogSQLBinaries.txt
+
+Robocopy E:\ C:\TEMP\TempDB *.* /E /COPY:DAT /SEC /DCOPY:T /XD "E:\$RECYCLE.BIN" /XD "E:\System Volume Information" /Log:C:\temp\RoboLogTempDB.txt
+
+
+
+Robocopy C:\TEMP\SQLBinaries D:\ *.* /E /COPY:DAT /SEC /DCOPY:T /XD "C:\$RECYCLE.BIN" /XD "C:\System Volume Information" /Log:C:\temp\RoboLogSQLBinaries2.txt
+
+Robocopy C:\TEMP\TempDB E:\ *.* /E /COPY:DAT /SEC /DCOPY:T /XD "C:\$RECYCLE.BIN" /XD "C:\System Volume Information" /Log:C:\temp\RoboLogTempDB2.txt
+
+
+

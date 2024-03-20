@@ -1,0 +1,1 @@
+@[User::DestinationFolder]+ (DT_WSTR,4)DATEPART("yyyy",GetDate()) + "_" + "Claims1099Report" + ".xls
